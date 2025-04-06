@@ -8,16 +8,32 @@ const UserSchema = new mongoose.Schema(
     address: { type: String },
     bloodType: { type: String },
     avatar: { type: String, default: "/profile.jpeg" },
-    medicalHistory: { type: [String], default: [] },
+    medicalHistory: {
+      type: [
+        {
+          date: { type: Date, default: Date.now },
+          symptoms: [String],
+          diagnosis: String,
+          chat: [
+            {
+              question: String,
+              answer: String,
+            },
+          ],
+        },
+      ],
+      default: [],
+    },
     reports: [
       {
         name: String,
-        url: String, 
+        url: String,
       },
     ],
-    password: { type: String, required: true }, 
+    password: { type: String, required: true },
   },
   { timestamps: true }
 );
+
 
 export default mongoose.models.User || mongoose.model("User", UserSchema);

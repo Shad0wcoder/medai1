@@ -56,17 +56,43 @@ const Profile = () => {
 
       {/* Search History */}
       <div className="mt-6">
-        <h2 className="text-xl font-semibold border-b pb-2">Search History</h2>
-        <ul className="mt-2 text-gray-700">
-          {user.medicalHistory && user.medicalHistory.length > 0 ? (
-            user.medicalHistory.map((item: string, index: number) => (
-              <li key={index} className="py-1">✅ {item}</li>
-            ))
-          ) : (
-            <p className="text-gray-500">No search history found.</p>
-          )}
-        </ul>
-      </div>
+  <h2 className="text-xl font-semibold border-b pb-2">Search History</h2>
+  {user.medicalHistory && user.medicalHistory.length > 0 ? (
+    <ul className="mt-4 space-y-4">
+      {user.medicalHistory.map((entry: any, index: number) => (
+        <li
+          key={index}
+          className="p-4 border rounded-lg shadow-sm bg-gray-50"
+        >
+          <p className="text-sm text-gray-500">
+            <strong>Date:</strong>{" "}
+            {new Date(entry.date).toLocaleString()}
+          </p>
+          <p className="text-gray-800 mt-1">
+            <strong>Diagnosis:</strong> {entry.diagnosis}
+          </p>
+          <p className="text-gray-800 mt-1">
+            <strong>Symptoms:</strong> {entry.symptoms.join(', ')}
+          </p>
+          <div className="mt-2">
+            <strong className="text-gray-700">Conversation:</strong>
+            <ul className="list-disc ml-5 text-sm text-gray-600 mt-1">
+              {entry.chat.map((c: any, idx: number) => (
+                <li key={idx}>
+                  <strong>Q:</strong> {c.question} <br />
+                  <strong>A:</strong> {c.answer}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="text-gray-500 mt-2">No search history found.</p>
+  )}
+</div>
+
 
       <div className="mt-6">
         <h2 className="text-xl font-semibold border-b pb-2">Health Reports</h2>
