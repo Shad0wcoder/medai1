@@ -9,6 +9,24 @@ const Chat = () => {
   const [messages, setMessages] = useState<{ sender: string; text?: string; image?: string }[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [userAvatar, setUserAvatar] = useState("/user-avatar.png");
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await fetch('/api/auth/user', { credentials: "include" });
+        if (!res.ok) throw new Error(`HTTP Error! Status: ${res.status}`);
+        const data = await res.json();
+        if (data?.user?.avatar) {
+          setUserAvatar(data.user.avatar);
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error);
+      }
+    };
+    fetchUser();
+  }, []);
+
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -76,41 +94,55 @@ const Chat = () => {
                        w-75 h-full sm:w-auto sm:h-auto rounded-lg"
           >
             {/* Chat Header */}
-            <div className="p-3 bg-blue-500 text-white font-bold flex justify-between">
+            <div className="p-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold flex justify-between items-center">
               <span>MedAI Chat</span>
               <button onClick={() => setExpanded(false)} className="text-lg"><FaTimes /></button>
             </div>
 
             {/* Chat Messages Area with Auto-Scroll */}
-            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-3 space-y-2">
+            <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-3 space-y-3 bg-[#f9fafe]">
               {messages.map((msg, index) => (
-                <motion.div 
-                  key={index} 
-                  initial={{ opacity: 0, y: 10 }} 
-                  animate={{ opacity: 1, y: 0 }} 
-                  transition={{ duration: 0.3 }} 
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                   className={`p-2 flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  {/* Text Message */}
-                  {msg.text && (
-      <span 
-        className={`px-10 py-2 rounded-lg max-w-[70%] text-left ${
-          msg.sender === "user" 
-            ? "bg-blue-500 text-white self-end"  // User messages: right-aligned
-            : "bg-gray-200 text-black self-start" // AI messages: left-aligned
-        } break-words whitespace-pre-line`}
-                    >
-                      {msg.text}
-                    </span>
-                  )}
+                  <div className={`flex items-start gap-2 ${msg.sender === "user" ? "flex-row-reverse" : ""}`}>
+                    {/* Profile Icon */}
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold">
+                      <img
+                        src={msg.sender === "user" ? userAvatar : "/AI.png"}
+                        alt="avatar"
+                        className={`object-cover
+    ${msg.sender === "user" ? "w-10 h-10 rounded-full border-2 border-green-500" : "w-10 h-10"}`}
+                      />
+
+
+                    </div>
+
+                    {/* Text Message */}
+                    {msg.text && (
+                      <span
+                        className={`px-4 py-2 rounded-lg max-w-[70%] text-left ${msg.sender === "user"
+                          ? "bg-blue-600 text-white"
+                          : "bg-[#e0f2f1] text-gray-800"
+                          } break-words whitespace-pre-line`}
+                      >
+                        {msg.text}
+                      </span>
+                    )}
+                  </div>
                 </motion.div>
               ))}
 
+
               {/* Typing Indicator */}
               {isTyping && (
-                <motion.div 
-                  initial={{ opacity: 0 }} 
-                  animate={{ opacity: 1 }} 
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ repeat: Infinity, repeatType: "reverse", duration: 0.8 }}
                   className="p-2 flex justify-start"
                 >
@@ -129,7 +161,7 @@ const Chat = () => {
                 onChange={(e) => setInput(e.target.value)}
               />
               {/* Send Button */}
-              <button onClick={handleSendMessage} className="bg-blue-500 text-white px-4 py-2 rounded-r-lg">
+              <button onClick={handleSendMessage} className="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700">
                 <FaPaperPlane />
               </button>
             </div>
@@ -140,11 +172,11 @@ const Chat = () => {
         {!expanded && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-96 p-5 flex flex-col items-center">
             <div className="flex w-full max-w-md">
-              <input 
-                type="text" 
-                value={input} 
+              <input
+                type="text"
+                value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Enter symptoms..." 
+                placeholder="Enter symptoms..."
                 className="w-full p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md"
               />
               <button onClick={handleSendMessage} className="bg-blue-600 text-white px-5 py-3 rounded-r-md hover:bg-blue-700">

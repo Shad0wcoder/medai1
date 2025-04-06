@@ -38,8 +38,10 @@ export default function TrendingNews() {
     fetchNews();
   }, []);
 
+  
+
   return (
-    <section className="py-10 px-6 bg-white">
+    <section className="py-10 px-6 bg-white bg-background text-foreground">
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl font-bold text-blue-600 mb-8">📰 Trending Health News</h2>
 
