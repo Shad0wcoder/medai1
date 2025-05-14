@@ -48,7 +48,6 @@ export default function useSocket(setMessages: React.Dispatch<React.SetStateActi
             // Display `r` in chat if exists
             type RKeys = keyof NonNullable<ResponseData["r"]>; // 'desc' | 'prec'
 
-            const key: RKeys = "desc"; // or dynamically set
             // Ensure 'prec' is an array of strings and join them with line breaks
             if (data.r) {
                 if (data.r.prec && data.r.desc) {
