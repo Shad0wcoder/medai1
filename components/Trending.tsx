@@ -28,8 +28,8 @@ export default function TrendingNews() {
         console.log("Total articles received:", data.results.length);
 
         setNews(shuffleAndLimit(data.results || [], 9));
-      } catch (err: any) {
-        setError(err.message || "An error occurred while fetching news");
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "An error occurred while fetching news");
       } finally {
         setLoading(false);
       }
