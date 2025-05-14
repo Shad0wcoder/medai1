@@ -36,8 +36,12 @@ export default function Login() {
       toast.success("Login successful! Redirecting...");
       router.push("/"); 
     } catch (err) {
-      setError((err as any).response?.data?.message || "Invalid email or password.");
-      toast.error((err as any).response?.data?.message || "Login failed!");
+      if (axios.isAxiosError(err) && err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Invalid email or password.");
+      }
+      toast.error(axios.isAxiosError(err) && err.response?.data?.message ? err.response.data.message : "Login failed!");
     } finally {
       setLoading(false);
     }

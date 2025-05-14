@@ -11,7 +11,7 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [userAvatar, setUserAvatar] = useState("/user-avatar.png");
-  const [_userName, setUserName] = useState("");
+  // const [userName, setUserName] = useState("");
   const [image, setImage] = useState<File | null>(null); // New state for image
   const [imagePreview, setImagePreview] = useState<string | null>(null); 
 
@@ -27,7 +27,6 @@ const Chat = () => {
         if (data?.user) {
           if (data.user.avatar) setUserAvatar(data.user.avatar);
           if (data.user.name) {
-            setUserName(data.user.name);
             setName(data.user.name);
           }
         }

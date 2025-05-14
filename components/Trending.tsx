@@ -16,7 +16,7 @@ const shuffleAndLimit = (array: NewsArticle[], limit: number) => {
 export default function TrendingNews() {
   const [news, setNews] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -28,6 +28,8 @@ export default function TrendingNews() {
         console.log("Total articles received:", data.results.length);
 
         setNews(shuffleAndLimit(data.results || [], 9));
+      } catch (err: any) {
+        setError(err.message || "An error occurred while fetching news");
       } finally {
         setLoading(false);
       }
@@ -35,8 +37,6 @@ export default function TrendingNews() {
 
     fetchNews();
   }, []);
-
-  
 
   return (
     <section className="py-10 px-6 bg-background text-foreground">
