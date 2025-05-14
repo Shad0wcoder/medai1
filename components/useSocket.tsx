@@ -45,8 +45,6 @@ export default function useSocket(setMessages: React.Dispatch<React.SetStateActi
                 setMessages((prev) => [...prev, { sender: 'MedAi', text: `You may have <b>${data.p}</b>` }]);
             }
 
-            // Display `r` in chat if exists
-            type RKeys = keyof NonNullable<ResponseData["r"]>; // 'desc' | 'prec'
 
             // Ensure 'prec' is an array of strings and join them with line breaks
             if (data.r) {

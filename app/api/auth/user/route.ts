@@ -4,6 +4,11 @@ import { connectDB } from "@/lib/mongodb";
 import User from "@/models/User";
 
 const SECRET_KEY = process.env.JWT_SECRET || "your_secret_key";
+interface JwtPayload {
+  id: string;
+  iat?: number;
+  exp?: number;
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -14,7 +19,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    const decoded: any = jwt.verify(token, SECRET_KEY);
+    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
     const user = await User.findById(decoded.id).select(
       "-password -createdAt -updatedAt"
     );
@@ -37,7 +42,7 @@ export async function PATCH(req: NextRequest) {
         const token = req.cookies.get("token")?.value;
         if (!token) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
-        const decoded: any = jwt.verify(token, SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
         console.log("Decoded user ID:", decoded.id);
 
         const body = await req.json();

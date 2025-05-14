@@ -1,12 +1,28 @@
 'use client';
 import { useEffect, useState } from 'react';
+
+interface User {
+  avatar?: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  bloodType?: string;
+  medicalHistory?: {
+    date: string;
+    diagnosis: string;
+    symptoms: string[];
+    chat: { question: string; answer: string }[];
+  }[];
+  reports?: { _id: string; name: string }[];
+}
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { FaUserEdit, FaFileMedical } from 'react-icons/fa';
 
 const Profile = () => {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -59,7 +75,7 @@ const Profile = () => {
   <h2 className="text-xl font-semibold border-b pb-2">Search History</h2>
   {user.medicalHistory && user.medicalHistory.length > 0 ? (
     <ul className="mt-4 space-y-4">
-      {user.medicalHistory.map((entry: any, index: number) => (
+      {user.medicalHistory.map((entry, index) => (
         <li
           key={index}
           className="p-4 border rounded-lg shadow-sm bg-gray-50"
@@ -77,7 +93,7 @@ const Profile = () => {
           <div className="mt-2">
             <strong className="text-gray-700">Conversation:</strong>
             <ul className="list-disc ml-5 text-sm text-gray-600 mt-1">
-              {entry.chat.map((c: any, idx: number) => (
+              {entry.chat.map((c, idx) => (
                 <li key={idx}>
                   <strong>Q:</strong> {c.question} <br />
                   <strong>A:</strong> {c.answer}
