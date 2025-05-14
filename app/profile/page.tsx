@@ -37,7 +37,7 @@ const Profile = () => {
           alt="User Avatar"
           width={80}
           height={80}
-          className="rounded-full border shadow border-gray-500"
+          className="w-20 h-20 rounded-full border shadow border-gray-500 object-cover"
         />
         <div className="text-center sm:text-left">
           <h1 className="text-2xl font-bold">{user.name || 'N/A'}</h1>

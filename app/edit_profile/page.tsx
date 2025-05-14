@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const EditProfile = () => {
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+
   const router = useRouter();
   const [user, setUser] = useState({
     name: '',
@@ -50,36 +52,63 @@ const EditProfile = () => {
 
   // Handle avatar change
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      const imageUrl = URL.createObjectURL(file);
-      setUser((prev) => ({ ...prev, avatar: imageUrl }));
-    }
-  };
+  if (e.target.files && e.target.files[0]) {
+    const file = e.target.files[0];
+    setSelectedImage(file);
+    const previewUrl = URL.createObjectURL(file);
+    setUser((prev) => ({ ...prev, avatar: previewUrl }));
+  }
+};
+
 
   // Handle form submission
-  const handleSave = async () => {
-    try {
-      const res = await fetch('/api/auth/user', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user),
-        credentials: "include",
+const handleSave = async () => {
+  try {
+    let uploadedImageUrl = user.avatar;
+
+    if (selectedImage) {
+      const formData = new FormData();
+      formData.append("file", selectedImage);
+      formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
+
+      const uploadRes = await fetch(process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_URL!, {
+        method: "POST",
+        body: formData,
       });
-  
-      if (!res.ok) throw new Error('Failed to update profile');
-  
-      // Refetch user data to get latest updates
-      const fetchRes = await fetch('/api/auth/user', { credentials: "include" });
-      const updatedUser = await fetchRes.json();
-  
-      setUser(updatedUser.user); // Update UI with latest data
-      router.push('/profile'); // Redirect after update
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      setError('Failed to update profile.');
+
+      const data = await uploadRes.json();
+      console.log("Cloudinary response:", data);
+
+      if (data.secure_url) {
+        uploadedImageUrl = data.secure_url;
+      } else {
+        throw new Error("Cloudinary upload failed");
+      }
     }
-  };
+
+    const updatedUser = { ...user, avatar: uploadedImageUrl };
+
+    const res = await fetch('/api/auth/user', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(updatedUser),
+      credentials: "include",
+    });
+
+    if (!res.ok) throw new Error('Failed to update profile');
+
+    const fetchRes = await fetch('/api/auth/user', { credentials: "include" });
+    const updatedData = await fetchRes.json();
+
+    setUser(updatedData.user);
+    router.push('/profile');
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    setError('Failed to update profile.');
+  }
+};
+
+
   
   
 
@@ -98,7 +127,7 @@ const EditProfile = () => {
           alt="User Avatar"
           width={80}
           height={80}
-          className="rounded-full border shadow"
+          className="w-20 h-20 rounded-full border shadow border-gray-500 object-cover"
         />
         <label className="px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 cursor-pointer">
           Change Avatar
