@@ -9,7 +9,9 @@ export async function GET() {
     const data = await response.json();
 
     return Response.json({ results: data.articles || [] });
-  } catch (error) {
-    return Response.json({ error: "Failed to fetch news" }, { status: 500 });
-  }
+  } catch {
+  // No use of `error` here
+  return Response.json({ message: "Something went wrong" }, { status: 500 });
 }
+
+  }

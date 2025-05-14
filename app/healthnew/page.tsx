@@ -24,7 +24,7 @@ export default function TrendingNews() {
         console.log("Total articles received:", data.results.length);
 
         setNews(data.results || []);
-      } catch (err) {
+      } catch {
         setError("Failed to fetch news. Please try again.");
       } finally {
         setLoading(false);
