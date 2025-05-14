@@ -28,7 +28,7 @@ export default function TrendingNews() {
         console.log("Total articles received:", data.results.length);
 
         setNews(shuffleAndLimit(data.results || [], 9));
-      } catch (err) {
+      } catch (error) {
         setError("Failed to fetch news. Please try again.");
       } finally {
         setLoading(false);

@@ -4,7 +4,7 @@ import { ResponseData, AnswerData, FormatData } from "@/lib/minterfaces";
 
 const SOCKET_URL = "http://127.0.0.1:8000";
 
-export default function useSocket(setMessages: React.Dispatch<React.SetStateAction<FormatData[]>>, messages: FormatData[]) {
+export default function useSocket(setMessages: React.Dispatch<React.SetStateAction<FormatData[]>>) {
     const socketref = useRef<Socket | null>(null);
     const [message, setMessage] = useState<ResponseData[]>([]);
     const [nameSet, setNameSet] = useState(false);
@@ -116,7 +116,7 @@ export default function useSocket(setMessages: React.Dispatch<React.SetStateActi
         if (resdict.qkey === 5) {
             if (msg === "yes" || msg === "no") {
                 const nextI = i + 1;
-                let newStack = [...answerStack];
+                const newStack = [...answerStack];
 
                 if (msg === "yes" && ql[i]) {
                     newStack.push(ql[i][0]);

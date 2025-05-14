@@ -8,7 +8,13 @@ import { FiMenu, FiX } from "react-icons/fi";
 
 export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  // Define the User type
+  type User = {
+    name: string;
+    avatar?: string;
+  };
+  
+  const [user, setUser] = useState<User | null>(null);
   const [currentImage, setCurrentImage] = useState("im1.jpg");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
