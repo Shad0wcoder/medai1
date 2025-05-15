@@ -11,11 +11,11 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [userAvatar, setUserAvatar] = useState("/user-avatar.png");
-  // const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState("");
   const [image, setImage] = useState<File | null>(null); // New state for image
-  const [imagePreview, setImagePreview] = useState<string | null>(null); 
+  const [imagePreview, setImagePreview] = useState<string | null>(null); // New state for image preview
 
-  const { sendMessage, setName, sendImage } = useSocket(setMessages);
+  const { sendMessage, setName, sendImage } = useSocket(setMessages, messages);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +27,7 @@ const Chat = () => {
         if (data?.user) {
           if (data.user.avatar) setUserAvatar(data.user.avatar);
           if (data.user.name) {
+            setUserName(data.user.name);
             setName(data.user.name);
           }
         }
@@ -48,15 +49,15 @@ const Chat = () => {
 
     setExpanded(true);
     if (input.trim()) {
-  sendMessage(input);
+      setMessages((prev) => [...prev, { sender: "user", text: input }]);
     }
     if (image) {
       sendImage(image); // Send the image to the backend or display it in the chat
       setMessages((prev) => [
         ...prev,
-        { sender: "user", image: URL.createObjectURL(image) }
+        { sender: "user", text: "[Image sent]", imageUrl: URL.createObjectURL(image) }
       ]);
-      setImage(null); 
+      setImage(null); // Clear image after sending
       setImagePreview(null); // Clear image preview
     }
     setInput(""); // Clear input
@@ -85,18 +86,18 @@ const Chat = () => {
   };
 
   // Handle drag and drop image
-  // const handleDragOver = (e: React.DragEvent) => {
-  //   e.preventDefault();
-  // };
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+  };
 
-  // const handleDrop = (e: React.DragEvent) => {
-  //   e.preventDefault();
-  //   const file = e.dataTransfer.files?.[0];
-  //   if (file) {
-  //     setImage(file);
-  //     setImagePreview(URL.createObjectURL(file)); // Set image preview
-  //   }
-  // };
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file) {
+      setImage(file);
+      setImagePreview(URL.createObjectURL(file)); // Set image preview
+    }
+  };
 
   return (
     <section className="flex flex-col items-center text-center mt-10 px-4">
@@ -130,7 +131,7 @@ const Chat = () => {
                   transition={{ duration: 0.3 }}
                   className={`p-2 flex ${msg.sender === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`flex items-start gap-2 font-medium ${msg.sender === "user" ? "flex-row-reverse" : ""}`}>
+                  <div className={`flex items-start gap-2 font-bold ${msg.sender === "user" ? "flex-row-reverse" : ""}`}>
                     <img
                       src={msg.sender === "user" ? userAvatar : "/AI.png"}
                       alt="avatar"
