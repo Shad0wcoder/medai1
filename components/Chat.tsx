@@ -11,11 +11,11 @@ const Chat = () => {
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [userAvatar, setUserAvatar] = useState("/user-avatar.png");
-  const [userName, setUserName] = useState("");
+  const [, setUserName] = useState("");
   const [image, setImage] = useState<File | null>(null); // New state for image
   const [imagePreview, setImagePreview] = useState<string | null>(null); // New state for image preview
 
-  const { sendMessage, setName, sendImage } = useSocket(setMessages, messages);
+  const { sendMessage, setName, sendImage } = useSocket(setMessages);
 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
@@ -86,18 +86,7 @@ const Chat = () => {
   };
 
   // Handle drag and drop image
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      setImage(file);
-      setImagePreview(URL.createObjectURL(file)); // Set image preview
-    }
-  };
 
   return (
     <section className="flex flex-col items-center text-center mt-10 px-4">
